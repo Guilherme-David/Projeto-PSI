@@ -1,6 +1,6 @@
 import sqlite3
 
-BANCO='schema.sql'
+BANCO='storage/schema.sql'
 
 # conectar com o banco
 conexao = sqlite3.connect('banco.db')
