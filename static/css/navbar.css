@@ -1,0 +1,32 @@
+nav {
+    display: flex;
+    align-items: center;
+    height: 10%;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    padding: 0% 3%;
+    border-bottom: 3.5px solid rgb(255, 213, 0);
+}
+
+nav .logo {
+    height: 25%;
+    width: 25%;
+}
+
+nav .links {
+    display: flex;
+    width: 80%;
+    margin: 10px 0px 0px 10px;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+nav .links a {
+    font-size: 15px;
+    color: #ce8b17;
+    text-decoration: none;
+}
+
+nav .links a:hover {
+    border-bottom: 1px solid;
+}

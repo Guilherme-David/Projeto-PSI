@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-Br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %} {% endblock %} </title>
+    <link rel="icon" type="image/x-icon" href="../static/images/fdglogo.ico"> <!-- Iconezinho pra deiaxr caprichado-->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'> <!-- Fonte das páginas (Não tá pegando nn sei pq)-->
+    <link rel="stylesheet" href="../static/css/base.css">  <!-- Customização padrão de todas as páginas -->
+    <link rel="stylesheet" href="../static/css/navbar.css">  <!-- Customização padrão da navbar para todas as páginas -->
     {% block css %} {% endblock %}
 </head>
 <body>
+    {% include '/includes/navbar.html'   %}
     {% block conteudo %} {% endblock %}
 </body>
 </html>
