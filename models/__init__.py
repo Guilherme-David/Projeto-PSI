@@ -1,12 +1,15 @@
 from flask_login import UserMixin
 from storage.database import obter_conexao
+from werkzeug.security import generate_password_hash
 
 class User(UserMixin):
-    def __init__(self, id, email, senha_hash, is_admin = False):
+    def __init__(self, id, email, senha_hash, is_admin = False, nome=None, cpf=None):
         self.id = id
         self.email = email
         self.senha_hash = senha_hash
         self.is_admin = is_admin
+        self.nome = nome
+        self.cpf = cpf
 
     @classmethod
     def get(cls, user_id):
@@ -14,7 +17,7 @@ class User(UserMixin):
         sql = "SELECT * FROM tb_usuarios WHERE id = ?"
         resultado = conexao.execute(sql, (user_id,)).fetchone()
         if resultado:
-            return User(id=resultado['id'],email=resultado['email'], senha=resultado['senha'], is_admin=bool(resultado['is_admin']))
+            return User(id=resultado['id'],email=resultado['email'], senha_hash=resultado['senha'], is_admin=bool(resultado['is_admin']))
         conexao.close()
         return None
 
@@ -57,3 +60,16 @@ class User(UserMixin):
         conexao.execute(sql, (email,))
         conexao.commit()
         conexao.close()
+    
+    def update(self, email, senha, nome, cpf): #nao chequei tudo dessa função
+        conexao = obter_conexao()
+        senha_hash = generate_password_hash(senha) #hash para a senha nova
+        sql = "UPDATE tb_usuarios SET email = ?, senha = ?, nome = ?, cpf = ? WHERE id = ?"
+        conexao.execute(sql, (email, senha_hash, nome, cpf, self.id))
+        conexao.commit()
+        conexao.close()
+        #atualiza os atributos do objeto pra ficar de igual com os dados novos
+        self.email = email
+        self.senha_hash = senha_hash
+        self.nome = nome
+        self.cpf = cpf

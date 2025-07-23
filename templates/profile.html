@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Seu Perfil
+{% endblock %}
+
+{% block conteudo %}
+
+<form method="POST">
+    <label>Email:</label>
+    <input type="text" name="email" value="{{ usuario.email }}" required><br>
+
+    <label>Senha:</label>
+    <input type="password" id="senha" name="senha" placeholder="Digite nova senha"><br>
+    <button type="button" onclick="desocultarSENHA()">Mostrar senha</button><br>
+
+    <label>Nome (opcional):</label>
+    <input type="text" name="nome" value="{{ usuario.nome or '' }}"><br>
+
+    <label>CPF (opcional):</label>
+    <input type="text" name="cpf" value="{{ usuario.cpf or '' }}"><br>
+
+    <button type="submit">Salvar alterações</button>
+
+<script>
+function desocultarSENHA() {
+    const campo = document.getElementById("senha");
+    if (campo.type === "password")
+    {
+        campo.type = "text";
+    } 
+    else 
+    {
+        campo.type = "password";
+    }
+}
+</script>
+{% endblock %}

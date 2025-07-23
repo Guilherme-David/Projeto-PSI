@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import secrets
 from storage.database import obter_conexao
 from models import User
@@ -21,6 +22,7 @@ def load_user(user_id):
 def home():
     return render_template("index.html", is_authenticated=current_user.is_authenticated)
 
+
 @app.route('/register', methods=['POST','GET'])
 def register():
     
@@ -29,14 +31,15 @@ def register():
         senha= request.form['senha']
         senha_hash = generate_password_hash(senha)
         usuarios = User.all()
+        usuarios = User.all()
 
         if email not in usuarios:
             user = User(id=None, email=email, senha_hash=senha_hash)
             salvar = user.save()
             login_user(user)
-            return redirect(url_for('produtos'))
+            return redirect(url_for('cardapio'))
         # Mensagem de ERRO
-        return redirect(url_for('register')
+        return redirect(url_for('register'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,19 +55,36 @@ def login():
         if resultado and check_password_hash(resultado['senha'], senha):
             user = User(id=resultado['id'],email=resultado['email'],senha_hash=resultado['senha'],is_admin=bool(resultado['is_admin']))
             login_user(user)
-            return redirect(url_for('produtos'))
+            return redirect(url_for('cardapio'))
         return redirect(url_for('login'))
     return render_template('login.html')
     
+
 @app.route("/cardapio", methods = ["GET", "POST"])
 @login_required
 def cardapio():
     return render_template("produtos.html")
 
+@app.route("/profile", methods = ["GET", "POST"])
+@login_required
+def profile():
+    if request.method == 'POST':
+        novo_email = request.form['email']
+        nova_senha = request.form['senha']
+        nome = request.form.get('nome', None)
+        cpf = request.form.get('cpf', None)
 
+        #atualiza os dados do usuario q ta logado na pagina com os valores novos n testei ainda com o nome e cpf
+        current_user.update(novo_email, nova_senha, nome, cpf)
+        flash("dados mudados com suceso", "success") #msg de teste pra saber se deu certo
+        return redirect(url_for('profile'))
+    
+    senha_visivel = "******" #valor inutil pra n exibir a senha original logo de cara, ai pra ver prescisa apertar no botao
+    return render_template("profile.html", usuario=current_user, senha_visivel=senha_visivel)
 
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
