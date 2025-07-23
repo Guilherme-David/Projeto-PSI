@@ -28,11 +28,15 @@ def register():
         email = request.form['email']
         senha= request.form['senha']
         senha_hash = generate_password_hash(senha)
+        usuarios = User.all()
 
-        user = User(id=None, email=email, senha_hash=senha_hash)
-        salvar = user.save()
-        login_user(user)
-        return redirect(url_for('produtos'))
+        if email not in usuarios:
+            user = User(id=None, email=email, senha_hash=senha_hash)
+            salvar = user.save()
+            login_user(user)
+            return redirect(url_for('produtos'))
+        # Mensagem de ERRO
+        return redirect(url_for('register')
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
