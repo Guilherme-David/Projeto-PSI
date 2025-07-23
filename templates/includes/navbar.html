@@ -2,7 +2,14 @@
     <a href="{{ url_for('home') }}"> <img class="logo" src="../../static/images/fdglogo2.png"" alt=""></A>
     <div class="links">
         <a href="{{ url_for('home') }}"> INÍCIO</a>
-        <a href="{{ url_for('cardapio' ) }}">CARDÁPIO</a>
-        <a href="{{ url_for('logout' ) }}"">SAIR</a>
+        {% if is_authenticated %}
+            <a href="{{ url_for('cardapio') }}">CARDÁPIO</a>
+            <a href="{{ url_for('profile')}}" class="profile">PERFIL</a>
+            <a href="{{ url_for('logout') }}">SAIR</a>
+        {% end if %}
+        {% if not is_authenticated %}
+            <a href="{{ url_for('register') }}" class="register">CADASTRE-SE</a>
+            <a href="{{ url_for('login') }}" class="login">LOGIN</a>
+        {% end if %}
     </div>
 </nav>
