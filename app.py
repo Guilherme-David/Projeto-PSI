@@ -1,9 +1,8 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
-from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+from flask import Flask, flash, make_response, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import secrets
 from storage.database import obter_conexao
-from models import User
+from models import User, Produto
 from werkzeug.security import generate_password_hash, check_password_hash
 
 secret_key = secrets.token_urlsafe(32)
@@ -22,24 +21,20 @@ def load_user(user_id):
 def home():
     return render_template("index.html", is_authenticated=current_user.is_authenticated)
 
-
 @app.route('/register', methods=['POST','GET'])
 def register():
-    
     if request.method == "POST":
         email = request.form['email']
         senha= request.form['senha']
         senha_hash = generate_password_hash(senha)
-        usuarios = User.all()
-        usuarios = User.all()
-
-        if email not in usuarios:
-            user = User(id=None, email=email, senha_hash=senha_hash)
-            salvar = user.save()
+        user = User(id=None, email=email, senha_hash=senha_hash)
+        sucesso = user.save()
+        if sucesso:
             login_user(user)
             return redirect(url_for('cardapio'))
-        # Mensagem de ERRO
-        return redirect(url_for('register'))
+        else:
+            # flash("E-mail já cadastrado.") MENSAGEM DE ERRO, ADICIONAR DEPOIS
+            return redirect(url_for('register'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -49,21 +44,40 @@ def login():
         senha= request.form['senha']
 
         conexao = obter_conexao()
-        sql = "SELECT * FROM tb_usuarios WHERE email = ?"
+        sql = "SELECT * FROM tb_usuarios WHERE usr_email = ?"
         resultado = conexao.execute(sql, (email,)).fetchone()
+        conexao.close()
 
-        if resultado and check_password_hash(resultado['senha'], senha):
-            user = User(id=resultado['id'],email=resultado['email'],senha_hash=resultado['senha'],is_admin=bool(resultado['is_admin']))
+        if resultado and check_password_hash(resultado['usr_senha'], senha):
+            user = User(id=resultado['usr_id'],email=resultado['usr_email'],senha_hash=resultado['usr_senha'],is_admin=bool(resultado['usr_is_admin']))
             login_user(user)
             return redirect(url_for('cardapio'))
         return redirect(url_for('login'))
     return render_template('login.html')
     
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
-@app.route("/cardapio", methods = ["GET", "POST"])
+@app.route("/cardapio", methods = ["GET"])
 @login_required
 def cardapio():
-    return render_template("produtos.html")
+    produtos = Produto.all() 
+    is_admin = bool(current_user.is_admin)
+    return render_template("produtos.html", produtos=produtos, is_admin=is_admin)
+
+@app.route('/cardapio/adicionar', methods = ["POST"])
+def adicionar():
+    nome_produto = request.form['nome']
+    preco = request.form['preco']
+    url_imagem = request.form['url']
+    produto = Produto(id=None, nome=nome_produto, preco=preco, url_imagem=url_imagem)
+    produto.save()
+    #MENSAGEM DE PRODUTO CADASTRADO
+    return redirect(url_for('cardapio'))
+
 
 @app.route("/profile", methods = ["GET", "POST"])
 @login_required
@@ -82,9 +96,4 @@ def profile():
     senha_visivel = "******" #valor inutil pra n exibir a senha original logo de cara, ai pra ver prescisa apertar no botao
     return render_template("profile.html", usuario=current_user, senha_visivel=senha_visivel)
 
-@app.route('/logout', methods=['POST'])
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
+    
