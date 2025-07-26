@@ -14,11 +14,11 @@ class User(UserMixin):
     @classmethod
     def get(cls, user_id):
         conexao = obter_conexao()
-        sql = "SELECT * FROM tb_usuarios WHERE id = ?"
+        sql = "SELECT * FROM tb_usuarios WHERE usr_id = ?"
         resultado = conexao.execute(sql, (user_id,)).fetchone()
-        if resultado:
-            return User(id=resultado['id'],email=resultado['email'], senha_hash=resultado['senha'], is_admin=bool(resultado['is_admin']))
         conexao.close()
+        if resultado:
+            return User(id=resultado['usr_id'],email=resultado['usr_email'], senha_hash=resultado['usr_senha'], is_admin=bool(resultado['usr_is_admin']))
         return None
 
     @classmethod
@@ -26,28 +26,27 @@ class User(UserMixin):
         conexao = obter_conexao()
         sql = "SELECT * FROM tb_usuarios"
         resultados = conexao.execute(sql, ).fetchall()
-        usuarios = {}
+        conexao.close()
         usuarios = []
         for i in resultados:
-            usuario = User( id=i['id'],email=i['email'],is_admin=i['is_admin']  )
+            usuario = User(id=i['usr_id'],email=i['usr_email'], senha_hash=i['usr_senha'],is_admin=i['usr_is_admin']  )
             usuarios.append(usuario)
-        
-        conexao.close()
         return usuarios
 
     def save(self):
         conexao = obter_conexao()
 
         # Verifica se usuário já existe
-        sql = "SELECT * FROM tb_usuarios WHERE email = ?"
+        sql = "SELECT * FROM tb_usuarios WHERE usr_email = ?"
         resultado = conexao.execute(sql, (self.email,)).fetchone()
         if resultado:
             conexao.close()
             return None
         else:
             # Insere novo usuário
-            sql_insert = "INSERT INTO tb_usuarios (email, senha, is_admin) VALUES (?, ?, ?)"
-            conexao.execute(sql_insert, (self.email, self.senha_hash, int(self.is_admin)))
+            sql_insert = "INSERT INTO tb_usuarios (usr_email, usr_senha, usr_is_admin) VALUES (?, ?, ?)"
+            cursor = conexao.execute(sql_insert, (self.email, self.senha_hash, int(self.is_admin)))
+            self.id = cursor.lastrowid
             conexao.commit()
             conexao.close()
             return True
@@ -56,7 +55,7 @@ class User(UserMixin):
     def delete(cls, email):
         conexao = obter_conexao()
 
-        sql = "DELETE FROM tb_usuarios WHERE nome = ?"
+        sql = "DELETE FROM tb_usuarios WHERE usr_email = ?"
         conexao.execute(sql, (email,))
         conexao.commit()
         conexao.close()
@@ -64,7 +63,7 @@ class User(UserMixin):
     def update(self, email, senha, nome, cpf): #nao chequei tudo dessa função
         conexao = obter_conexao()
         senha_hash = generate_password_hash(senha) #hash para a senha nova
-        sql = "UPDATE tb_usuarios SET email = ?, senha = ?, nome = ?, cpf = ? WHERE id = ?"
+        sql = "UPDATE tb_usuarios SET usr_email = ?, usr_senha = ?, usr_nome = ?, usr_cpf = ? WHERE usr_id = ?"
         conexao.execute(sql, (email, senha_hash, nome, cpf, self.id))
         conexao.commit()
         conexao.close()
@@ -73,3 +72,52 @@ class User(UserMixin):
         self.senha_hash = senha_hash
         self.nome = nome
         self.cpf = cpf
+
+class Produto():
+    def __init__(self, id, nome, preco, url_imagem):
+        self.id = id
+        self.nome = nome
+        self.preco = preco
+        self.imagem = url_imagem
+
+
+    @classmethod
+    def get(cls, user_id):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_produtos WHERE pro_id = ?"
+        resultado = conexao.execute(sql, (user_id,)).fetchone()
+        conexao.close()
+        if resultado:
+            return Produto(id=['pro_id'], nome=['pro_nome'], preco=['pro_preco'], imagem=['pro_url_imagem'])
+        return None
+
+
+    @classmethod
+    def all(cls):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_produtos"
+        resultados = conexao.execute(sql, ).fetchall()
+        conexao.close()
+        produtos = []
+        for i in resultados:
+            produto = Produto(id=i['pro_id'], nome=i['pro_nome'], preco=i['pro_preco'], url_imagem=i['pro_url_imagem'])
+            produtos.append(produto)
+        return produtos
+
+    def save(self):
+        conexao = obter_conexao()
+
+        # Insere novo produto
+        sql_insert = "INSERT INTO tb_produtos (pro_nome, pro_preco, pro_url_imagem) VALUES (?, ?, ?)"
+        conexao.execute(sql_insert, (self.nome, self.preco, self.imagem))
+        conexao.commit()
+        conexao.close()
+        return True
+
+    @classmethod
+    def delete(cls, id):
+        conexao = obter_conexao()
+        sql = "DELETE FROM tb_usuarios WHERE pro_id = ?"
+        conexao.execute(sql, (id,))
+        conexao.commit()
+        conexao.close()
