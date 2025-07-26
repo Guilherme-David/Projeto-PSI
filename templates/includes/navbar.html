@@ -6,10 +6,10 @@
             <a href="{{ url_for('cardapio') }}">CARDÁPIO</a>
             <a href="{{ url_for('profile')}}" class="profile">PERFIL</a>
             <a href="{{ url_for('logout') }}">SAIR</a>
-        {% end if %}
+        {% endif %}
         {% if not is_authenticated %}
             <a href="{{ url_for('register') }}" class="register">CADASTRE-SE</a>
             <a href="{{ url_for('login') }}" class="login">LOGIN</a>
-        {% end if %}
+        {% endif %}
     </div>
 </nav>
