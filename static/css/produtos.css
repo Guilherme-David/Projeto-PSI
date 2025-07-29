@@ -11,6 +11,7 @@ main {
     width: 100%;
     display: flex;
     flex-direction: column;
+    padding-top: 5%;
 }
 
 header {
@@ -71,7 +72,9 @@ header button:hover {
     border-radius: 5%;
     box-shadow: 1.5px 1.5px 1.5px 1.5px rgb(0, 0, 0, 0.1);
     border: 1px solid rgb(0, 0, 0, 0.15);
+    padding: 10%;
 }
+
 
 .produto .img {
     width: 100%;
@@ -86,11 +89,28 @@ header button:hover {
 }
 
 .produto .caption {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 10%
+}
+
+.caption button{
+    position: absolute;
+    right: 0;
+    top: 30%;
+    background-color: rgb(255, 112, 112);
+    aspect-ratio: 1/1;
+    color: rgb(244, 238, 238);
+    width: 20px;
+    border: 1.5px solid  rgb(0, 0, 0);
+}
+
+.caption button:hover {
+    cursor: pointer;
+    background-color: rgb(192, 67, 67);
 }
 
 .overlay {
