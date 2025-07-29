@@ -4,6 +4,7 @@ import secrets
 from storage.database import obter_conexao
 from models import User, Produto
 from werkzeug.security import generate_password_hash, check_password_hash
+from decorators import admin_required
 
 secret_key = secrets.token_urlsafe(32)
 
@@ -17,9 +18,14 @@ login_manager.login_view = "login"
 def load_user(user_id):
     return User.get(user_id)
 
+
+@app.context_processor
+def compartilhar_autenticado(): #Decorator com função que compartilha a informação do estado do usuário (logado ou não logado), para a personalização da navbar
+    return {"is_authenticated": current_user.is_authenticated}
+
 @app.route('/', methods = ["GET", "POST"])
 def home():
-    return render_template("index.html", is_authenticated=current_user.is_authenticated)
+    return render_template("index.html")
 
 @app.route('/register', methods=['POST','GET'])
 def register():
@@ -69,6 +75,7 @@ def cardapio():
     return render_template("produtos.html", produtos=produtos, is_admin=is_admin)
 
 @app.route('/cardapio/adicionar', methods = ["POST"])
+@admin_required
 def adicionar():
     nome_produto = request.form['nome']
     preco = request.form['preco']
@@ -78,6 +85,11 @@ def adicionar():
     #MENSAGEM DE PRODUTO CADASTRADO
     return redirect(url_for('cardapio'))
 
+@app.route('/cardapio/remover/<item>', methods=["POST"])
+@admin_required
+def remover(item):
+    Produto.delete(item)
+    return redirect(url_for('cardapio'))
 
 @app.route("/profile", methods = ["GET", "POST"])
 @login_required
