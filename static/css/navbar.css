@@ -2,7 +2,7 @@ nav {
     position: fixed;
     display: flex;
     align-items: center;
-    height: 10%;
+    height: 10vh;
     width: 100%;
     background-color: rgb(255, 255, 255);
     padding: 0% 3%;
