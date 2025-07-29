@@ -14,23 +14,33 @@
             {% endif %}
         </header>
         <div class="main-produtos">
-            {% for produto in produtos %}
-                <div class="produto">
-                    <span class="img"> <img src="{{ produto.imagem}}"> </span>
-                    <span class="caption"> 
-                        {% set preco = produto.preco|float(0) %}
-                        <p class="produtonome"> {{ produto.nome }} </p>
-                        <p class="produtopreço"> R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }} </p>
-                        {% if is_admin %}
-                                <form method="post" action="{{ url_for('remover', item=produto.id) }}">
-                                    <button type="submit" onclick="return confirm('Deseja mesmo remover este item?')">
-                                        &#128465;
-                                    </button>
-                                </form>                        
-                        {% endif %}
-                    </span>
+            <section class="sectionprodutos">
+                <h2> Hambúrgueres </h2>
+                <span class="line"> </span>
+                <div class="produtos">
+                    {% for produto in hamburguers %}
+                        {% include 'includes/produto.html' %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </section>
+            <section class="sectionprodutos">
+                <h2> Bebidas </h2>
+                <span class="line"> </span>
+                <div class="produtos">
+                    {% for produto in bebidas %}
+                        {% include 'includes/produto.html' %}
+                    {% endfor %}
+                </div>
+            </section>
+            <section class="sectionprodutos">
+                <h2> Sobremesas </h2>
+                <span class="line"> </span>
+                <div class="produtos">
+                    {% for produto in sobremesas %}
+                        {% include 'includes/produto.html' %}
+                    {% endfor %}
+                </div>
+            </section>
         </div>
         <div id="newproduto" class="overlay hide">
             <div class="popup-adicionar"> 
@@ -43,6 +53,12 @@
                     <input type="text" id="nome" required name="nome">
                     <label for="preco"> Preço produto: </label>
                     <input type="text" id="preco" required name="preco">
+                    <label for="categoria"> </label>
+                    <select name="categoria" id="categoria" required> 
+                        <option value="hamburguers"> Hambúrgueres </option>
+                        <option value="sobremesas"> Sobremesas </option>
+                        <option value="bebidas"> Bebidas </option>
+                    </select>
                     <label for="url"> Imagem do Produto(URL): </label>
                     <input type="url" id="url" required name="url">
                     <button type="submit"> Adicionar</button>
