@@ -117,7 +117,7 @@ class Produto():
     @classmethod
     def delete(cls, id):
         conexao = obter_conexao()
-        sql = "DELETE FROM tb_usuarios WHERE pro_id = ?"
+        sql = "DELETE FROM tb_produtos WHERE pro_id = ?"
         conexao.execute(sql, (id,))
         conexao.commit()
         conexao.close()
