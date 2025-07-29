@@ -20,7 +20,14 @@
                     <span class="caption"> 
                         {% set preco = produto.preco|float(0) %}
                         <p class="produtonome"> {{ produto.nome }} </p>
-                        <p class="produtopreço""> R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }} </p>
+                        <p class="produtopreço"> R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }} </p>
+                        {% if is_admin %}
+                                <form method="post" action="{{ url_for('remover', item=produto.id) }}">
+                                    <button type="submit" onclick="return confirm('Deseja mesmo remover este item?')">
+                                        &#128465;
+                                    </button>
+                                </form>                        
+                        {% endif %}
                     </span>
                 </div>
             {% endfor %}
