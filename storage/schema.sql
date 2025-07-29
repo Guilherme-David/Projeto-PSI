@@ -12,5 +12,6 @@ CREATE TABLE if not exists tb_produtos (
     pro_id INTEGER PRIMARY KEY AUTOINCREMENT,
     pro_nome TEXT NOT NULL,
     pro_preco TEXT NOT NULL,
-    pro_url_imagem TEXT NOT NULL 
+    pro_url_imagem TEXT NOT NULL,
+    pro_categoria TEXT NOT NULL
 );
