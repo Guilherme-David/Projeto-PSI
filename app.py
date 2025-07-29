@@ -18,7 +18,6 @@ login_manager.login_view = "login"
 def load_user(user_id):
     return User.get(user_id)
 
-
 @app.context_processor
 def compartilhar_autenticado(): #Decorator com função que compartilha a informação do estado do usuário (logado ou não logado), para a personalização da navbar
     return {"is_authenticated": current_user.is_authenticated}
@@ -72,7 +71,17 @@ def logout():
 def cardapio():
     produtos = Produto.all() 
     is_admin = bool(current_user.is_admin)
-    return render_template("produtos.html", produtos=produtos, is_admin=is_admin)
+    hamburguers = []
+    sobremesas = []
+    bebidas = []
+    for produto in produtos:
+        if produto.categoria == 'sobremesas':
+            sobremesas.append(produto)
+        elif produto.categoria == 'hamburguers':
+            hamburguers.append(produto)
+        elif produto.categoria == 'bebidas':
+            bebidas.append(produto)
+    return render_template("produtos.html", hamburguers=hamburguers, bebidas=bebidas, sobremesas=sobremesas, is_admin=is_admin)
 
 @app.route('/cardapio/adicionar', methods = ["POST"])
 @admin_required
@@ -80,7 +89,8 @@ def adicionar():
     nome_produto = request.form['nome']
     preco = request.form['preco']
     url_imagem = request.form['url']
-    produto = Produto(id=None, nome=nome_produto, preco=preco, url_imagem=url_imagem)
+    categoria = request.form['categoria']
+    produto = Produto(id=None, nome=nome_produto, preco=preco, url_imagem=url_imagem, categoria=categoria)
     produto.save()
     #MENSAGEM DE PRODUTO CADASTRADO
     return redirect(url_for('cardapio'))
