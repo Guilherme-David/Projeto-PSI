@@ -74,12 +74,12 @@ class User(UserMixin):
         self.cpf = cpf
 
 class Produto():
-    def __init__(self, id, nome, preco, url_imagem):
+    def __init__(self, id, nome, preco, url_imagem, categoria):
         self.id = id
         self.nome = nome
         self.preco = preco
         self.imagem = url_imagem
-
+        self.categoria = categoria
 
     @classmethod
     def get(cls, user_id):
@@ -88,7 +88,7 @@ class Produto():
         resultado = conexao.execute(sql, (user_id,)).fetchone()
         conexao.close()
         if resultado:
-            return Produto(id=['pro_id'], nome=['pro_nome'], preco=['pro_preco'], imagem=['pro_url_imagem'])
+            return Produto(id=['pro_id'], nome=['pro_nome'], preco=['pro_preco'], imagem=['pro_url_imagem'], categoria=['pro_categoria'])
         return None
 
 
@@ -100,7 +100,7 @@ class Produto():
         conexao.close()
         produtos = []
         for i in resultados:
-            produto = Produto(id=i['pro_id'], nome=i['pro_nome'], preco=i['pro_preco'], url_imagem=i['pro_url_imagem'])
+            produto = Produto(id=i['pro_id'], nome=i['pro_nome'], preco=i['pro_preco'], url_imagem=i['pro_url_imagem'], categoria=i['pro_categoria'])
             produtos.append(produto)
         return produtos
 
@@ -108,8 +108,8 @@ class Produto():
         conexao = obter_conexao()
 
         # Insere novo produto
-        sql_insert = "INSERT INTO tb_produtos (pro_nome, pro_preco, pro_url_imagem) VALUES (?, ?, ?)"
-        conexao.execute(sql_insert, (self.nome, self.preco, self.imagem))
+        sql_insert = "INSERT INTO tb_produtos (pro_nome, pro_preco, pro_url_imagem, pro_categoria) VALUES (?, ?, ?, ?)"
+        conexao.execute(sql_insert, (self.nome, self.preco, self.imagem, self.categoria))
         conexao.commit()
         conexao.close()
         return True
