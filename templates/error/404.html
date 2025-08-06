@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    FDG - 404 not found
+{% endblock %}
+
+{% block css %} <link rel="stylesheet" href="static/css/error/404.css"> {% endblock %}
+
+{% block conteudo %}
+
+<canvas id="pixelCanvas"></canvas>
+<main id="main-area">
+    <div class="center">
+        <div class="msg-erro">
+            <h1>Erro 404: Página não encontrada</h1>
+            <p>Enquanto você procura aproveite o joguinho!</p>
+        </div>
+    </div>
+</main>
+<script>
+    // pega o canva e pega o contexto do desenho 2d
+    const canvas = document.getElementById('pixelCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // pega a area do main e é pra limitar onde as particulas se movem
+    const main = document.getElementById('main-area');
+    const mainRect = main.getBoundingClientRect();
+
+    // define as medidas do canva pelo tamanho do main
+    canvas.width = mainRect.width;
+    canvas.height = mainRect.height;
+
+    //config das fisicas
+    const gravidade = 0.2; //puxa as particulas pro chao
+    const friccao = 0.97; //resistencia no impacto com o chao
+    const quant_max = 25; //limite de particulas
+    const particles = []; //todas as particulas criadas ficam armazenadas aq
+
+    //carrega a image da pixel art
+    const pixelArt = new Image();
+    pixelArt.src = "/static/images/pixelartremovebg.png";
+
+    //classe de cada particula 
+    class Particle {
+        constructor(x, y, size = 32) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 2; //velocidade horizontal X
+            this.vy = Math.random() * 10 + 1; //velocidade vertical Y
+            this.size = size; //tamanho
+        }
+
+        //att posições e mexe com as colisões
+        update() {
+            this.vy += gravidade; //coloca gravidade
+            this.x += this.vx; //att pos horizontal
+            this.y += this.vy; //att pos vertical
+
+            // Colisão com fundo do <main>
+            if (this.y + this.size > canvas.height) {
+                this.y = canvas.height - this.size;
+                this.vy *= -friccao; //batida com perda de energia
+            }
+
+            // Colisão com laterais
+            if (this.x + this.size > canvas.width || this.x < 0) {
+                this.vx *= -1; //isso aq é pra inverter a direção quando bater na parede e ir da esquerda pra direita
+            }
+        }
+
+        //desenha a particula
+        draw() {
+            ctx.drawImage(pixelArt, this.x, this.y, this.size, this.size);
+        }
+
+        //interaçao com o mouse que empurra a particula se ela tiver perto do mouse
+        checkMouseCollision(mx, my) {
+            const dx = this.x + this.size / 2 - (mx - mainRect.left);
+            const dy = this.y + this.size / 2 - (my - mainRect.top);
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            //se o mouse estiver dentro do raio da partícula
+            if (dist < this.size) {
+                this.vx += dx * -0.1;
+                this.vy += dy * -0.1;
+            }
+        }
+    }
+
+    function spawnParticle() { //cria mais particulas enquanto n atinge o limite
+        if (particles.length >= quant_max) return;
+        const x = Math.random() * canvas.width;
+        particles.push(new Particle(x, -50));
+    }
+
+    // atualiza e desenha todas as particulas a cada frame
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+            p.update();
+            p.draw();
+        }
+        requestAnimationFrame(animate); //passa de um frame p outro
+    }
+
+    //na medida que o mouse se move empurra as particulas
+    canvas.addEventListener('mousemove', (e) => {
+        for (let p of particles) {
+            p.checkMouseCollision(e.clientX, e.clientY);
+        }
+    });
+
+    //spawna uma particula a cada 300 ms
+    setInterval(spawnParticle, 300);
+    //comeca a animação
+    animate();
+</script>
+
+
+
+{% endblock %}

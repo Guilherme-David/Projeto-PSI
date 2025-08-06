@@ -1,0 +1,35 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #1e1e1e;
+    color: white;
+    font-family: monospace;
+    text-align: center;
+    
+}
+
+main{
+    height: inherit;
+    width: inherit;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.msg-erro {
+    text-align: center;
+    margin-top: 50px;
+}
+h1 {
+    font-size: 48px;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

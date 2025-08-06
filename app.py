@@ -118,4 +118,15 @@ def profile():
     senha_visivel = "******" #valor inutil pra n exibir a senha original logo de cara, ai pra ver prescisa apertar no botao
     return render_template("profile.html", usuario=current_user, senha_visivel=senha_visivel)
 
-    
+@app.errorhandler(404)
+def pagina_nao_encontrada(error):
+    return render_template("error/404.html"), 404
+
+@app.route('/erro500') #pag de teste de erro 500
+def erro500():
+    # erro
+    return 1 / 0
+
+@app.errorhandler(500)
+def erro_interno(error):
+    return render_template("error/500.html"), 500
