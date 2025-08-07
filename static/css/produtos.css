@@ -58,7 +58,7 @@ header button:hover {
     flex-direction: column;
     padding: 0% 5%;
     gap: 1rem;
-    margin-top: 2%;
+    margin-top: 2.5%;
 }
 
 .produtos {
@@ -141,7 +141,8 @@ header button:hover {
 .caption button{
     position: absolute;
     right: 0;
-    top: 30%;
+    top: 50%;
+
     background-color: rgb(255, 112, 112);
     aspect-ratio: 1/1;
     color: rgb(244, 238, 238);

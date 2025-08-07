@@ -4,14 +4,31 @@
     FDG Burguer - Cadastro
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" href="../static/css/loginregister.css">
+{% endblock %}
+
 {% block conteudo %}
 
+
 <main> 
-    <form action="{{url_for('register')}}" method="post">
-        <input type="text" name="email">
-        <input type="password" name="senha">
-        <button>Enviar</button>
-    </form>
+    <div class="loginregister">
+        <span class="img">
+            <img src="https://imgur.com/5nzIQrx.png"> 
+        </span>
+
+        <span class="forms">
+            <form action="{{url_for('register')}}" method="post">
+                <h1> Cadastre-se </h1>
+                <p> Para uma melhor experiência, cadastre-se! </p>
+                <label for="email"> Digite seu email: </label>
+                <input type="text" name="email" id="email">
+                <label for="senha"> Digite sua senha: </label>
+                <input type="password" name="senha" id="senha">
+                <button>Cadastre-se</button>
+            </form>
+        </span>    
+    </div>
 </main>
 
 {% endblock %}

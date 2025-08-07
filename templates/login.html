@@ -4,14 +4,31 @@
     FDG - Login
 {% endblock %}
 
+
+{% block css %}
+    <link rel="stylesheet" href="../static/css/loginregister.css">
+{% endblock %}
+
 {% block conteudo %}
 
 <main> 
-    <form action="{{url_for('login')}}" method="post">
-        <input type="text" name="email">
-        <input type="password" name="senha">
-        <button>Enviar</button>
-    </form>
+    <div class="loginregister">
+        <span class="img">
+            <img src="https://imgur.com/5nzIQrx.png"> 
+        </span>
+
+        <span class="forms">
+            <form action="{{url_for('login')}}" method="post">
+                <h1> Login </h1>
+                <p> Acesse a FDG Burguer! </p>
+                <label for="email"> Digite seu email: </label>
+                <input type="text" name="email" id="email">
+                <label for="senha"> Digite sua senha: </label>
+                <input type="password" name="senha" id="senha">
+                <button> Entrar </button>
+            </form>
+        </span>    
+    </div>
 </main>
 
 {% endblock %}
