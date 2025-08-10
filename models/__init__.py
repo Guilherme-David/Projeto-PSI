@@ -18,7 +18,7 @@ class User(UserMixin):
         resultado = conexao.execute(sql, (user_id,)).fetchone()
         conexao.close()
         if resultado:
-            return User(id=resultado['usr_id'],email=resultado['usr_email'], senha_hash=resultado['usr_senha'], is_admin=bool(resultado['usr_is_admin']))
+            return User(id=resultado['usr_id'],email=resultado['usr_email'], senha_hash=resultado['usr_senha'], is_admin=bool(resultado['usr_is_admin']),cpf=resultado["usr_cpf"],nome=resultado["usr_nome"])
         return None
 
     @classmethod
@@ -29,7 +29,7 @@ class User(UserMixin):
         conexao.close()
         usuarios = []
         for i in resultados:
-            usuario = User(id=i['usr_id'],email=i['usr_email'], senha_hash=i['usr_senha'],is_admin=i['usr_is_admin']  )
+            usuario = User(id=i['usr_id'],email=i['usr_email'], senha_hash=i['usr_senha'],is_admin=i['usr_is_admin'],cpf=["usr_cpf"],nome=["usr_nome"]  )
             usuarios.append(usuario)
         return usuarios
 

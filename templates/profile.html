@@ -4,24 +4,29 @@
     FDG Burguer - Seu Perfil
 {% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" href="../static/css/profile.css">
+{% endblock %}
+
 {% block conteudo %}
+<main style="margin-top: 0vh;">
+    <form method="POST">
+        <label>Email:</label>
+        <input type="text" name="email" value="{{ usuario.email }}" required><br>
 
-<form method="POST">
-    <label>Email:</label>
-    <input type="text" name="email" value="{{ usuario.email }}" required><br>
+        <label>Senha:</label>
+        <input type="password" id="senha" name="senha" placeholder="Digite nova senha"><br>
+        <button type="button" onclick="desocultarSENHA()">Mostrar senha</button><br>
 
-    <label>Senha:</label>
-    <input type="password" id="senha" name="senha" placeholder="Digite nova senha"><br>
-    <button type="button" onclick="desocultarSENHA()">Mostrar senha</button><br>
+        <label>Nome (opcional):</label>
+        <input type="text" name="nome" value="{{ usuario.nome or '' }}"><br>
 
-    <label>Nome (opcional):</label>
-    <input type="text" name="nome" value="{{ usuario.nome or '' }}"><br>
+        <label>CPF (opcional):</label>
+        <input type="text" name="cpf" value="{{ usuario.cpf or '' }}"><br>
 
-    <label>CPF (opcional):</label>
-    <input type="text" name="cpf" value="{{ usuario.cpf or '' }}"><br>
-
-    <button type="submit">Salvar alterações</button>
-
+        <button type="submit">Salvar alterações</button>
+    </form>
+</main>
 <script>
 function desocultarSENHA() {
     const campo = document.getElementById("senha");
