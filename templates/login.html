@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-    FDG - Login
+    FDG Burguer - Login
 {% endblock %}
 
 
@@ -12,6 +12,9 @@
 {% block conteudo %}
 
 <main> 
+
+    {% set _ = get_flashed_messages() %} <!-- Gambiarra para parar de dar erro nas mensagens flash -->
+
     <div class="loginregister">
         <span class="img">
             <img src="../static/images/registerlogin.png"> 
@@ -21,6 +24,7 @@
             <form action="{{url_for('login')}}" method="post">
                 <h1> Login </h1>
                 <p> Acesse a FDG Burguer! </p>
+                {% include 'mensagens.html' %}
                 <label for="email"> Digite seu email: </label>
                 <input type="text" name="email" id="email">
                 <label for="senha"> Digite sua senha: </label>

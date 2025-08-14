@@ -17,10 +17,14 @@
             <img src="../static/images/registerlogin.png"> 
         </span>
 
+    {% set _ = get_flashed_messages() %} <!-- Gambiarra para parar de dar erro nas mensagens flash -->
+
+
         <span class="forms">
             <form action="{{url_for('register')}}" method="post">
                 <h1> Cadastre-se </h1>
                 <p> Para uma melhor experiência, cadastre-se! </p>
+                {% include 'mensagens.html' %}
                 <label for="email"> Digite seu email: </label>
                 <input type="text" name="email" id="email">
                 <label for="senha"> Digite sua senha: </label>

@@ -4,6 +4,8 @@
         <a href="{{ url_for('home') }}"> INÍCIO</a>
         {% if is_authenticated %}
             <a href="{{ url_for('cardapio') }}">CARDÁPIO</a>
+            <a href="{{ url_for('ver_sacola') }}">SACOLA</a>
+            <a href="{{ url_for('ver_pedidos') }}">PEDIDOS</a>
             <a href="{{ url_for('profile')}}" class="profile">PERFIL</a>
             <a href="{{ url_for('logout') }}">SAIR</a>
         {% endif %}

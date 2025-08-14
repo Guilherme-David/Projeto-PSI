@@ -5,11 +5,15 @@
 
 {% block conteudo %}
     <main>
+        
+        {% set _ = get_flashed_messages() %} <!-- Gambiarra para parar de dar erro nas mensagens flash -->
+
         <header>
             <span class="text"> <p> FDG BURGUER </p>
                 <h1> Cardápio </h1>
             </span>
             {% if is_admin %} 
+                {% include 'mensagens.html' %}
                 <button class="showhide-new"> Novo Produto </button>
             {% endif %}
         </header>

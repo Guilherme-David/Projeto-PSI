@@ -16,7 +16,18 @@
             <p class="produtopreço">
                 R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }}
             </p>
+            {% if not is_admin %}
+                <span class="finalizar">
+                    <form method="post" action="{{ url_for('adicionar_sacola', produto_id=produto.id) }}">
+                        <button type="submit" class="adicionar-sacola">
+                            <svg viewBox="0 0 20 20"><path d="M7.5,7.5V4A2.48,2.48,0,0,1,10,1.5,2.54,2.54,0,0,1,12.5,4V7.5"></path><polygon points="16.5 7.5 3.5 7.5 2.5 18.5 17.5 18.5 16.5 7.5"></polygon></svg> Adicionar
+                        </button>
+                        <input type="number" name="quantidade" value="1" min="1" required>
+                    </form>
+                </span>
+            {% endif %}
         </span>
+
         {% if is_admin %} 
             <span class="buttons">
                 <form method="post" action="{{ url_for('remover', item=produto.id) }}">

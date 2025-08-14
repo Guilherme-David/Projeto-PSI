@@ -10,6 +10,10 @@
 
 {% block conteudo %}
 <main style="margin-top: 0vh;">
+
+    {% set _ = get_flashed_messages() %} <!-- Gambiarra para parar de dar erro nas mensagens flash -->
+
+    {% include 'mensagens.html' %}
     <form method="POST">
         <label>Email:</label>
         <input type="text" name="email" value="{{ usuario.email }}" required><br>

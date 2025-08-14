@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block titulo %} FDG Burguer - Meus Pedidos {% endblock %}
+{% block css %} <link rel="stylesheet" href="static/css/pedidos.css"> {% endblock %}
+
+{% block conteudo %}
+<main>
+    <header>
+        <h1>Meus Pedidos</h1>
+    </header>
+
+    {% include 'mensagens.html' %}
+
+    {% if pedidos %}
+        {% for pedido in pedidos %}
+        <div class="pedido">
+            <h2>Pedido #{{ pedido.id }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in pedido.itens %}
+                    <tr>
+                        <td>{{ item.produto.nome }}</td>
+                        <td>{{ item.quantidade }}</td>
+                        <td>R$ {{ "{:,.2f}".format(item.produto.preco).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+                        <td>R$ {{ "{:,.2f}".format(item.produto.preco * item.quantidade).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="total"><strong>Total do Pedido:</strong> R$ {{ "{:,.2f}".format(pedido.total).replace(",", "X").replace(".", ",").replace("X", ".") }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="vazio">Você ainda não fez nenhum pedido.</p>
+    {% endif %}
+</main>
+{% endblock %}

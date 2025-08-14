@@ -271,3 +271,53 @@ header button:hover {
     width: 50%;
     height: 50%;        
 }
+
+.finalizar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espaço entre botão e input */
+    margin-top: 10px;
+    width: 100%;
+}
+
+.finalizar form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.finalizar input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(0,0,0,0.2);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.adicionar-sacola {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background-color: #28a745; /* verde */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.adicionar-sacola:hover {
+    background-color: #218838; /* verde mais escuro ao passar o mouse */
+}
+
+.adicionar-sacola svg {
+    width: 20px;
+    height: 20px;
+    stroke: white; /* ícone branco */
+    fill: none;
+}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block titulo %} FDG Burguer - Minha Sacola {% endblock %}
+{% block css %} <link rel="stylesheet" href="static/css/sacolas.css"> {% endblock %}
+
+{% block conteudo %}
+    <main>
+        <header>
+            <h1>Minha Sacola</h1>
+        </header>
+
+        {% set _ = get_flashed_messages() %} <!-- Gambiarra para parar de dar erro nas mensagens flash -->
+
+        {% include 'mensagens.html' %}
+
+        {% if itens %}
+            <table class="tabela-sacola">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Total</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in itens %}
+                    <tr>
+                        <td>{{ item.produto.nome }}</td>
+                        <td>{{ item.item.quantidade }}</td>
+                        <td>
+                            R$ {{ "{:,.2f}".format(item.produto.preco).replace(",", "X").replace(".", ",").replace("X", ".") }}
+                        </td>
+                        <td>
+                            R$ {{ "{:,.2f}".format(item.subtotal).replace(",", "X").replace(".", ",").replace("X", ".") }}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('remover_sacola', item_id=item.item.id) }}">
+                                <button type="submit" onclick="return confirm('Remover este item?')">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+            <div class="resumo-sacola">
+                <p><strong>Total:</strong> R$ {{ "{:,.2f}".format(total).replace(",", "X").replace(".", ",").replace("X", ".") }}</p>
+                <form method="post" action="{{ url_for('finalizar_sacola') }}">
+                    <button type="submit" class="finalizar">Finalizar Compra</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="vazio">Sua sacola está vazia.</p>
+        {% endif %}
+    </main>
+{% endblock %}

@@ -73,7 +73,7 @@ class User(UserMixin):
         self.nome = nome
         self.cpf = cpf
 
-class Produto():
+class Produto():  
     def __init__(self, id, nome, preco, url_imagem, categoria):
         self.id = id
         self.nome = nome
@@ -82,13 +82,13 @@ class Produto():
         self.categoria = categoria
 
     @classmethod
-    def get(cls, user_id):
+    def get(cls, produto_id):
         conexao = obter_conexao()
         sql = "SELECT * FROM tb_produtos WHERE pro_id = ?"
-        resultado = conexao.execute(sql, (user_id,)).fetchone()
+        resultado = conexao.execute(sql, (produto_id,)).fetchone()
         conexao.close()
         if resultado:
-            return Produto(id=['pro_id'], nome=['pro_nome'], preco=['pro_preco'], imagem=['pro_url_imagem'], categoria=['pro_categoria'])
+            return Produto(id=resultado['pro_id'], nome=resultado['pro_nome'], preco=float(resultado['pro_preco']), url_imagem=resultado['pro_url_imagem'], categoria=resultado['pro_categoria'])
         return None
 
 
@@ -133,3 +133,141 @@ class Produto():
         self.preco = preco
         self.imagem = url
         self.categoria = categoria
+
+class Sacola:
+    def __init__(self, id, usuario_id, status='ativa'):
+        self.id = id
+        self.usuario_id = usuario_id
+        self.status = status
+
+    @classmethod
+    def get(cls, usuario_id):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_sacolas WHERE sac_usr_id = ? AND sac_status = 'ativa'"
+        resultado = conexao.execute(sql, (usuario_id,)).fetchone()
+        conexao.close()
+        if resultado:
+            return Sacola(id=resultado['sac_id'], usuario_id=resultado['sac_usr_id'], status=resultado['sac_status'])
+        return None
+
+    def save(self):
+        conexao = obter_conexao()
+        sql = "INSERT INTO tb_sacolas (sac_usr_id, sac_status) VALUES (?, ?)"
+        cursor = conexao.execute(sql, (self.usuario_id, self.status))
+        self.id = cursor.lastrowid
+        conexao.commit()
+        conexao.close()
+        return True
+
+    def finalizar(self):
+        conexao = obter_conexao()
+        sql = "UPDATE tb_sacolas SET sac_status = 'finalizada' WHERE sac_id = ?"
+        conexao.execute(sql, (self.id,))
+        conexao.commit()
+        conexao.close()
+        self.status = 'finalizada'
+
+class ItemSacola:
+    def __init__(self, id, sacola_id, produto_id, quantidade):
+        self.id = id
+        self.sacola_id = sacola_id
+        self.produto_id = produto_id
+        self.quantidade = quantidade
+
+    @classmethod
+    def all(cls, sacola_id):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_itens_sacola WHERE itm_sac_id = ?"
+        resultados = conexao.execute(sql, (sacola_id,)).fetchall()
+        conexao.close()
+        itens = []
+        for i in resultados:
+            itens.append(ItemSacola(id=i['itm_id'], sacola_id=i['itm_sac_id'], produto_id=i['itm_pro_id'], quantidade=i['itm_quantidade']))
+        return itens
+
+    def save(self):
+        conexao = obter_conexao()
+        sql = "INSERT INTO tb_itens_sacola (itm_sac_id, itm_pro_id, itm_quantidade) VALUES (?, ?, ?)"
+        cursor = conexao.execute(sql, (self.sacola_id, self.produto_id, self.quantidade))
+        self.id = cursor.lastrowid
+        conexao.commit()
+        conexao.close()
+        return True
+    
+    def atualizar_quantidade(self, nova_qtd):
+        conexao = obter_conexao()
+        sql = "UPDATE tb_itens_sacola SET itm_quantidade=? WHERE itm_id=?"
+        conexao.execute(sql, (nova_qtd, self.id))
+        conexao.commit()
+        conexao.close()
+        self.quantidade = nova_qtd
+
+    @classmethod
+    def delete(cls, item_id):
+        conexao = obter_conexao()
+        sql = "DELETE FROM tb_itens_sacola WHERE itm_id=?"
+        conexao.execute(sql, (item_id,))
+        conexao.commit()
+        conexao.close()
+
+
+class Pedido():
+    def __init__(self, id, usuario_id, total):
+        self.id = id
+        self.usuario_id = usuario_id
+        self.total = total
+
+    def save(self):
+        conexao = obter_conexao()
+        sql = "INSERT INTO tb_pedidos (ped_usr_id, ped_total) VALUES (?, ?)"
+        cursor = conexao.execute(sql, (self.usuario_id, self.total))
+        self.id = cursor.lastrowid
+        conexao.commit()
+        conexao.close()
+        return True
+    
+    @classmethod
+    def all(cls, usuario_id):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_pedidos WHERE ped_usr_id = ? ORDER BY ped_id DESC"
+        resultados = conexao.execute(sql, (usuario_id,)).fetchall()
+        conexao.close()
+
+        pedidos = []
+        for i in resultados:
+            pedido = Pedido(id=i['ped_id'], usuario_id=i['ped_usr_id'],total=i['ped_total'])
+            # Pega os itens do pedido
+            itens = ItemPedido.all(pedido.id)
+            # Para cada item, adiciona o produto completo
+            for item in itens:
+                item.produto = Produto.get(item.produto_id)
+            pedido.itens = itens
+            pedidos.append(pedido)
+        return pedidos
+        
+
+class ItemPedido():
+    def __init__(self, id, pedido_id, produto_id, quantidade):
+        self.id = id
+        self.pedido_id = pedido_id
+        self.produto_id = produto_id
+        self.quantidade = quantidade
+
+    def save(self):
+        conexao = obter_conexao()
+        sql = "INSERT INTO tb_itens_pedido (itm_ped_id, itm_pro_id, itm_quantidade) VALUES (?, ?, ?)"
+        cursor = conexao.execute(sql, (self.pedido_id, self.produto_id, self.quantidade))
+        self.id = cursor.lastrowid
+        conexao.commit()
+        conexao.close()
+        return True
+    
+    @classmethod
+    def all(cls, pedido_id):
+        conexao = obter_conexao()
+        sql = "SELECT * FROM tb_itens_pedido WHERE itm_ped_id = ?"
+        resultados = conexao.execute(sql, (pedido_id,)).fetchall()
+        conexao.close()
+        itens = []
+        for i in resultados:itens.append(ItemPedido(id=i['itm_id'],pedido_id=i['itm_ped_id'],produto_id=i['itm_pro_id'],quantidade=i['itm_quantidade']))
+        return itens

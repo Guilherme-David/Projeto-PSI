@@ -2,7 +2,7 @@ from flask import Flask, flash, make_response, redirect, render_template, reques
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import secrets
 from storage.database import obter_conexao
-from models import User, Produto
+from models import User, Produto, Sacola, ItemSacola, Pedido, ItemPedido
 from werkzeug.security import generate_password_hash, check_password_hash
 from decorators import admin_required
 
@@ -26,6 +26,7 @@ def compartilhar_autenticado(): #Decorator com função que compartilha a inform
 def home():
     return render_template("index.html")
 
+# ---------------------- ROTAS DE AUTENTICAÇÃO ----------------------
 @app.route('/register', methods=['POST','GET'])
 def register():
     if request.method == "POST":
@@ -38,7 +39,7 @@ def register():
             login_user(user)
             return redirect(url_for('cardapio'))
         else:
-            # flash("E-mail já cadastrado.") MENSAGEM DE ERRO, ADICIONAR DEPOIS
+            flash("E-mail já cadastrado.", "error")
             return redirect(url_for('register'))
     return render_template('register.html')
 
@@ -57,7 +58,9 @@ def login():
             user = User(id=resultado['usr_id'],email=resultado['usr_email'],senha_hash=resultado['usr_senha'],is_admin=bool(resultado['usr_is_admin']))
             login_user(user)
             return redirect(url_for('cardapio'))
-        return redirect(url_for('login'))
+        else:
+            flash("Usuário ou senha incorretos. Tente novamente.", "error")
+            return redirect(url_for('login'))
     return render_template('login.html')
     
 @app.route('/logout', methods=['GET'])
@@ -66,6 +69,7 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# ---------------------- ROTAS DE PRODUTOS ----------------------
 @app.route("/cardapio", methods = ["GET"])
 @login_required
 def cardapio():
@@ -92,13 +96,14 @@ def adicionar():
     categoria = request.form['categoria']
     produto = Produto(id=None, nome=nome_produto, preco=preco, url_imagem=url_imagem, categoria=categoria)
     produto.save()
-    #MENSAGEM DE PRODUTO CADASTRADO
+    flash("Produto adicionado com sucesso!", "success")
     return redirect(url_for('cardapio'))
 
 @app.route('/cardapio/remover/<item>', methods=["POST"])
 @admin_required
 def remover(item):
     Produto.delete(item)
+    flash("Produto removido com sucesso!", "success")
     return redirect(url_for('cardapio'))
 
 @app.route('/cardapio/editar/<item>', methods=["POST"])
@@ -111,8 +116,84 @@ def editar(item):
     nova_categoria = request.form['categoria']
 
     Produto.update(item, novo_nome_produto, novo_preco, nova_url_imagem, nova_categoria)
+    flash("Produto editado com sucesso!", "success")
     return redirect(url_for('cardapio'))
 
+# ---------------------- ROTAS DE SACOLA/PEDIDOS ----------------------
+@app.route('/sacola', methods=["GET"])
+@login_required
+def ver_sacola():
+    sacola = Sacola.get(current_user.id)
+    if sacola:
+        itens = ItemSacola.all(sacola.id) 
+    else: 
+        itens = []
+    produtos_detalhes = []
+    total = 0
+    for item in itens:
+        produto = Produto.get(item.produto_id)
+        subtotal = produto.preco * item.quantidade
+        total += subtotal
+        produtos_detalhes.append({'item': item, 'produto': produto, 'subtotal': subtotal})
+    return render_template('sacolas.html', itens=produtos_detalhes, total=total)
+
+@app.route('/sacola/adicionar/<produto_id>', methods=["POST"])
+@login_required
+def adicionar_sacola(produto_id):
+    quantidade = int(request.form.get('quantidade', 1))
+    sacola = Sacola.get(current_user.id)
+    if not sacola:
+        sacola = Sacola(id=None, usuario_id=current_user.id)
+        sacola.save()
+    # Verifica se item já existe
+    itens = ItemSacola.all(sacola.id)
+    for item in itens:
+        if item.produto_id == int(produto_id):
+            item.atualizar_quantidade(item.quantidade + quantidade)
+            break
+    else:
+        novo_item = ItemSacola(id=None, sacola_id=sacola.id, produto_id=produto_id, quantidade=quantidade)
+        novo_item.save()
+    flash("Item adicionado à sacola", "success")
+    return redirect(url_for('ver_sacola'))
+
+@app.route('/sacola/remover/<item_id>', methods=["POST"])
+@login_required
+def remover_sacola(item_id):
+    ItemSacola.delete(item_id)
+    flash("Item removido da sacola", "success")
+    return redirect(url_for('ver_sacola'))
+
+@app.route('/sacola/finalizar', methods=["POST"])
+@login_required
+def finalizar_sacola():
+    sacola = Sacola.get(current_user.id)
+    if not sacola:
+        flash("Sacola vazia", "error")
+        return redirect(url_for('cardapio'))
+    itens = ItemSacola.all(sacola.id)
+    total = 0
+    for item in itens:
+        total += Produto.get(item.produto_id).preco * item.quantidade
+    pedido = Pedido(id=None, usuario_id=current_user.id, total=total)
+    pedido.save()
+    # Copia itens da sacola para o pedido
+    for item in itens:
+        produto = Produto.get(item.produto_id)
+        ip = ItemPedido(id=None, pedido_id=pedido.id, produto_id=produto.id,quantidade=item.quantidade)
+        ip.save()
+    # Finaliza a sacola
+    sacola.finalizar()
+    flash("Compra finalizada com sucesso", "success")
+    return redirect(url_for('cardapio'))
+
+@app.route("/pedidos")
+@login_required
+def ver_pedidos():
+    pedidos = Pedido.all(current_user.id)
+    return render_template("pedidos.html", pedidos=pedidos)
+
+# ---------------------- PERFIL ----------------------
 @app.route("/profile", methods = ["GET", "POST"])
 @login_required
 def profile():
@@ -130,6 +211,7 @@ def profile():
     senha_visivel = "******" #valor inutil pra n exibir a senha original logo de cara, ai pra ver prescisa apertar no botao
     return render_template("profile.html", usuario=current_user, senha_visivel=senha_visivel)
 
+# ---------------------- ERROS ----------------------
 @app.errorhandler(404)
 def pagina_nao_encontrada(error):
     return render_template("error/404.html"), 404
