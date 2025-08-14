@@ -10,7 +10,7 @@
                 <h1> Cardápio </h1>
             </span>
             {% if is_admin %} 
-                <button class="showhide"> Novo Produto </button>
+                <button class="showhide-new"> Novo Produto </button>
             {% endif %}
         </header>
         <div class="main-produtos">
@@ -46,7 +46,7 @@
             <div class="popup-adicionar"> 
                 <span class="popup-header">
                     <h2> Cadastro de Produto</h2>
-                    <button class="showhide">&times;</button>
+                    <button class="showhide-close ">&times;</button>
                 </span>
                 <form method="post" action="{{ url_for('adicionar') }}">
                     <label for="nome"> Nome do produto: </label>
@@ -68,11 +68,18 @@
     </main>
     
     <script>
-        document.querySelectorAll('.showhide').forEach(button => {
+        document.querySelectorAll('.showhide-new').forEach(button => {
             button.addEventListener('click', () => {
             const container = document.getElementById('newproduto');
             container.classList.toggle('hide');
             });
         });
+
+        document.querySelectorAll('#newproduto .showhide-close').forEach(button => {
+            button.addEventListener('click', () => {
+                const overlay = button.closest('.overlay');
+                overlay.classList.add('hide');
+            });
+        });        
     </script>
 {% endblock %}

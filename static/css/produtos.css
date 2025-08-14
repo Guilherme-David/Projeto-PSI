@@ -127,7 +127,14 @@ header button:hover {
 }
 
 .produto .caption {
-    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.produto .infos {
+    flex: 0 1 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -136,13 +143,11 @@ header button:hover {
     text-align: center;
 }
 
-
-
-.caption button{
+.caption .remover{
     position: absolute;
-    right: 0;
     top: 50%;
-
+    left: 50%;
+    transform: translate(-50%, -50%); /* desloca o elemento pelo próprio tamanho */
     background-color: rgb(255, 112, 112);
     aspect-ratio: 1/1;
     color: rgb(244, 238, 238);
@@ -150,9 +155,31 @@ header button:hover {
     border: 1.5px solid  rgb(0, 0, 0);
 }
 
-.caption button:hover {
+.caption .remover:hover {
     cursor: pointer;
     background-color: rgb(192, 67, 67);
+}
+
+.buttons {
+    flex: 1;
+    position: relative;
+}
+
+.caption .editar{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* desloca o elemento pelo próprio tamanho */
+    background-color: rgb(27, 15, 255);
+    aspect-ratio: 1/1;
+    color: rgb(244, 238, 238);
+    width: 20px;
+    border: 1.5px solid  rgb(0, 0, 0);
+}
+
+.caption .editar:hover {
+    cursor: pointer;
+    background-color: rgb(0, 39, 180);
 }
 
 .overlay {
@@ -221,4 +248,26 @@ header button:hover {
 .popup-header button:hover {
     cursor: pointer;
     background-color: rgb(192, 67, 67);
+}
+
+.popup-editar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 5px;
+    width: 50%;
+    height: 50%;
+    gap: 10%
+}
+
+
+.popup-editar form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5%;
+    width: 50%;
+    height: 50%;        
 }

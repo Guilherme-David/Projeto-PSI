@@ -3,17 +3,69 @@
         <img src="{{ produto.imagem }}">
     </span>
     <span class="caption">
-        {% set preco = produto.preco|float(0) %}
-        <p class="produtonome">{{ produto.nome }}</p>
-        <p class="produtopreço">
-            R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }}
-        </p>
         {% if is_admin %}
-            <form method="post" action="{{ url_for('remover', item=produto.id) }}">
-                <button type="submit" onclick="return confirm('Deseja mesmo remover este item?')">
-                    &#128465;
+            <span class="buttons">
+                <button class="showhide-editar editar" data-target="editproduto-{{ produto.id }}">
+                    &#x270F;
                 </button>
-            </form>
+            </span>
+        {% endif %}
+        <span class="infos">
+            {% set preco = produto.preco|float(0) %}
+            <p class="produtonome">{{ produto.nome }}</p>
+            <p class="produtopreço">
+                R$ {{ "{:,.2f}".format(preco).replace(",", "X").replace(".", ",").replace("X", ".") }}
+            </p>
+        </span>
+        {% if is_admin %} 
+            <span class="buttons">
+                <form method="post" action="{{ url_for('remover', item=produto.id) }}">
+                    <button type="submit" onclick="return confirm('Deseja mesmo remover este item?')" class="remover">
+                        &#128465;
+                    </button>
+                </form>
+            </span>
         {% endif %}
     </span>
 </div>
+
+<div id="editproduto-{{ produto.id }}" class="overlay hide">
+    <div class="popup-editar">
+        <span class="popup-header">
+            <h2> Eidtar Produto</h2>
+            <button class="showhide-close" data-target="editproduto-{{ produto.id }}">&times;</button>
+        </span>
+        <form method="post" action="{{ url_for('editar', item=produto.id)  }}">
+            <label> Nome do produto: </label>
+            <input type="text" name="nome" value=" {{ produto.nome }}">
+            <label> Preço produto: </label>
+            <input type="text" name="preco"  value = "{{ produto.preco }}" ">
+            <label> </label>
+            <select name="categoria"> 
+                <option value="hamburguers" {% if produto.categoria == 'hamburguers' %}selected{% endif %}>Hambúrgueres</option>
+                <option value="sobremesas" {% if produto.categoria == 'sobremesas' %}selected{% endif %}>Sobremesas</option>
+                <option value="bebidas" {% if produto.categoria == 'bebidas' %}selected{% endif %}>Bebidas</option>
+            </select>
+            <label> Imagem do Produto(URL): </label>
+            <input type="url" name="url" value="{{ produto.imagem }}">
+            <button type="submit"> Editar </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.showhide-editar').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+            const container = document.getElementById(targetId);
+            container.classList.remove('hide'); 
+        });
+    });
+
+    document.querySelectorAll('.showhide-close').forEach(button => {
+    button.addEventListener('click', () => {
+        const overlay = button.closest('.overlay'); 
+        overlay.classList.add('hide');
+    });
+});
+</script>

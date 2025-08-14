@@ -121,3 +121,15 @@ class Produto():
         conexao.execute(sql, (id,))
         conexao.commit()
         conexao.close()
+
+    @classmethod
+    def update(self, id, nome, preco, url, categoria):
+        conexao = obter_conexao()
+        sql = "UPDATE tb_produtos SET pro_nome = ?, pro_preco = ?, pro_url_imagem = ?, pro_categoria = ? WHERE pro_id = ?"
+        conexao.execute(sql, (nome, preco, url, categoria, id))
+        conexao.commit()
+        conexao.close()
+        self.nome = nome
+        self.preco = preco
+        self.imagem = url
+        self.categoria = categoria

@@ -101,6 +101,18 @@ def remover(item):
     Produto.delete(item)
     return redirect(url_for('cardapio'))
 
+@app.route('/cardapio/editar/<item>', methods=["POST"])
+@admin_required
+def editar(item):
+
+    novo_nome_produto = request.form['nome']
+    novo_preco = request.form['preco']
+    nova_url_imagem = request.form['url']
+    nova_categoria = request.form['categoria']
+
+    Produto.update(item, novo_nome_produto, novo_preco, nova_url_imagem, nova_categoria)
+    return redirect(url_for('cardapio'))
+
 @app.route("/profile", methods = ["GET", "POST"])
 @login_required
 def profile():
