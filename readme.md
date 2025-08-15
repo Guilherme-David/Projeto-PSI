@@ -39,19 +39,41 @@ Principais bibliotecas:
     python storage/iniciar.py
 5. **Executar a aplicação**
     ```bash
-    python app.py
+    venv\Scripts\activate
+    flask run --debug
 6. **Acesse No Navegador**
     ```bash
     http://127.0.0.1:5000
-## 🗒️ Observações
+
+##  Funcionalidades
+
+- O sistema possui autenticação(cadastro e login) usando flask-login.
+
+- Existe um usuário admin cujo no banco de dados pré-criado seu email é admin@admin.com e a senha é 123.
+
+- O usuário admin tem funcionalidades especiais, como a de cadastar, editar e deletar produtos do cardápio.
+
+-A rota profile permite a alteração de dados do usuário
+
+-O sistema possui a rota "/cardapio" que permite visualizar os produtos da hamburgueria
+
+-Como usuário comum, não utilizando um usuário administrador, em cada produto você pode definir uma quantidade que quiser e adicioná-lo à sacola
+
+-O sistema possui a rota "/sacola", nela você pode ver detalhes do pedido e finalizar a compra caso já tenha colocado os itens desejados, 
+ caso contrário, retorne a rota do cardápio e adicione novos itens(individualmente).
+
+-O sistema possui a rota "/pedidos" onde você pode ver seu histórico de pedidos.
+
+
+## 🗒️ Observações (!IMPORTANTE!)
 
 - O banco de dados padrão (storage/banco.db) já pode vir pré-criado.
 
-- Caso queira começar do zero, delete o arquivo banco.db e rode python storage/iniciar.py.
+- Caso queira começar do zero, delete o arquivo banco.db e rode python storage/iniciar.py. Porém, recomendamos que use o banco que já estará implementado pois já tem dados de teste dentro.
 
 - Certifique-se de estar usando Python 3.10+ para compatibilidade.
 
-- Caso queira testar a pagina de Erro500 certifique-se de não estar debugando o flask.
+- Caso queira testar a pagina de Erro500 certifique-se de não estar debugando o flask. Use "flask run", e não "flask run --debug". Para acessá-la, use a rota "/erro550".
 
 ## Estutura Do Projeto
     ├── app.py                  # Arquivo principal da aplicação Flask
@@ -60,4 +82,5 @@ Principais bibliotecas:
     ├── static/                 # Arquivos estáticos (CSS, imagens)
     ├── templates/              # Templates HTML (Jinja2)
     ├── storage/                # Banco de dados e scripts de inicialização
+    ├── decorators/             # Decoradores especiais para controlar acesso
     └── .gitignore
