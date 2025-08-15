@@ -1,12 +1,41 @@
 main {
-    height: 100%;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
 }
 
-.promote {
-    width: 100%;
-    height: 80%;
-    background: url(/static/images/backindex169.png) fixed no-repeat;
-    background-size: 100% 100%;
-    background-position: center;
+main img {
+    max-width: 200px;
+    margin-bottom: 20px;
+}
+
+main h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+main p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+main a.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff6600;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+main a.btn:hover {
+    background-color: #e65c00;
 }

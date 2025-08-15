@@ -5,9 +5,25 @@
 
 {% block conteudo %}
 <main>
-    <div class="promote">
-        
-    </div>
+    <img src="{{ url_for('static', filename='images/fdglogo.png') }}" alt="Logo FDG Burguer">
+    <h1>Bem-vindo ao FDG Burguer!</h1>
+    <p>Os melhores lanches da cidade, feitos com carinho e sabor irresistível.</p>
+
+    <a id="cta-button" class="btn" href="#">Carregando...</a>
 </main>
+
+<script> //mudar o botao se o usuario estiver logado
+    const isAuthenticated = {{ 'true' if is_authenticated else 'false' }};
+
+    const ctaButton = document.getElementById("cta-button");
+
+    if (isAuthenticated) {
+        ctaButton.textContent = "Ver Cardápio";
+        ctaButton.href = "{{ url_for('cardapio') }}";
+    } else {
+        ctaButton.textContent = "Cadastre-se ou Faça Login";
+        ctaButton.href = "{{ url_for('login') }}";
+    }
+</script>
 {% endblock %}
 
