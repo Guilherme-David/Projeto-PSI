@@ -43,14 +43,16 @@ Principais bibliotecas:
 6. **Acesse No Navegador**
     ```bash
     http://127.0.0.1:5000
-
 ## 🗒️ Observações
 
-O banco de dados padrão (storage/banco.db) já pode vir pré-criado.
+- O banco de dados padrão (storage/banco.db) já pode vir pré-criado.
 
-Caso queira começar do zero, delete o arquivo banco.db e rode python storage/iniciar.py.
+- Caso queira começar do zero, delete o arquivo banco.db e rode python storage/iniciar.py.
 
-Certifique-se de estar usando Python 3.10+ para compatibilidade.
+- Certifique-se de estar usando Python 3.10+ para compatibilidade.
+
+- Caso queira testar a pagina de Erro500 certifique-se de não estar debugando o flask.
+
 ## Estutura Do Projeto
     ├── app.py                  # Arquivo principal da aplicação Flask
     ├── requirements.txt        # Dependências do projeto
