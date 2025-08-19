@@ -224,3 +224,5 @@ def erro500():
 @app.errorhandler(500)
 def erro_interno(error):
     return render_template("error/500.html"), 500
+
+app.run()
